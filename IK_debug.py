@@ -152,7 +152,7 @@ def test_code(test_case):
 
     # SSS triangle for theta2 and theta3
     side_a = 1.501
-    side_b = sqrt(pow(sqrt(WC[0]*WC[0]+WC[1]*WC[1]),2) + pow((WC[2]-0.75),2))
+    side_b = sqrt(pow(sqrt(WC[0]*WC[0]+WC[1]*WC[1])-0.35, 2) + pow((WC[2]-0.75), 2))
     side_c = 1.25
 
     angle_a = acos((side_b*side_b+side_c*side_c-side_a*side_a)/(2*side_b*side_c))
