@@ -25,6 +25,7 @@ gazebo –version
 
 2-On TERMINAL:
 
+'''
 mkdir -p \~/catkin\_ws/src
 
 cd \~/catkin\_ws/
@@ -59,6 +60,7 @@ source \~/catkin\_ws/devel/setup.bash
 cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
 
 ./safe\_spawner.sh
+'''
 
 3-On TERMINAL:
 
