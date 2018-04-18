@@ -25,50 +25,36 @@ gazebo –version
 
 2-On TERMINAL:
 
-'''
+```
 mkdir -p \~/catkin\_ws/src
-
 cd \~/catkin\_ws/
-
 catkin\_make
-
 cd \~/catkin\_ws/src
-
 git clone <https://github.com/udacity/RoboND-Kinematics-Project.git>
-
 cd \~/catkin\_ws
-
 rosdep install --from-paths src --ignore-src --rosdistro=kinetic -y
-
 cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
-
 sudo chmod +x target\_spawn.py
-
 sudo chmod +x IK\_server.py
-
 sudo chmod +x safe\_spawner.sh
-
 cd \~/catkin\_ws
-
 catkin\_make
-
 export
 GAZEBO\_MODEL\_PATH=\~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/models
-
 source \~/catkin\_ws/devel/setup.bash
-
 cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
-
 ./safe\_spawner.sh
-'''
+```
 
 3-On TERMINAL:
 
+```
 source \~/catkin\_ws/devel/setup.bash
 
 cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
 
 rosrun kuka\_arm IK\_server.py
+```
 
 4-On RVIZ window:
 
