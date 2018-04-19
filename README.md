@@ -173,7 +173,7 @@ The transform matrix going from 6 to 3 is:
 
 And the implementation in the code is:
 
-![](./media/image20.png)
+![](./media/image20b.png)
 
 
 
