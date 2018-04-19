@@ -26,35 +26,32 @@ gazebo –version
 2-On TERMINAL:
 
 ```
-mkdir -p \~/catkin\_ws/src
-cd \~/catkin\_ws/
-catkin\_make
-cd \~/catkin\_ws/src
-git clone <https://github.com/udacity/RoboND-Kinematics-Project.git>
-cd \~/catkin\_ws
+mkdir -p ~/catkin_ws/src<br/>
+cd ~/catkin_ws/<br/>
+catkin_make<br/>
+cd ~/catkin_ws/src<br/>
+git clone https://github.com/caudaz/RoboND-Kinematics-Project<br/>
+cd ~/catkin_ws<br/>
 rosdep install --from-paths src --ignore-src --rosdistro=kinetic -y
-cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
-sudo chmod +x target\_spawn.py
-sudo chmod +x IK\_server.py
-sudo chmod +x safe\_spawner.sh
-cd \~/catkin\_ws
-catkin\_make
-export
-GAZEBO\_MODEL\_PATH=\~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/models
-source \~/catkin\_ws/devel/setup.bash
-cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
-./safe\_spawner.sh
+cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts<br/>
+sudo chmod +x target_spawn.py<br/>
+sudo chmod +x IK_server.py<br/>
+sudo chmod +x safe_spawner.sh<br/>
+cd ~/catkin_ws<br/>
+catkin_make<br/>
+export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/models
+source ~/catkin_ws/devel/setup.bash<br/>
+cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts<br/>
+./safe_spawner.sh
 ```
 
 3-On TERMINAL:
 
-```
 source \~/catkin\_ws/devel/setup.bash
 
 cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
 
 rosrun kuka\_arm IK\_server.py
-```
 
 4-On RVIZ window:
 
@@ -78,42 +75,88 @@ tools used for the project are:
 The goal of the project is to track the planned trajectory and
 successfully complete pick and place operation.
 
-**kinematics THEORY**
+**KINEMATICS GEOMETRY AND PARAMETERS**
 
-Your writeup should contain a DH parameter table with proper notations
-and description about how you obtained the table. Make sure to use the
-modified DH parameters discussed in this lesson. Please add an annotated
-figure of the robot with proper link assignments and joint rotations
-(Example figure provided in the writeup template). It is strongly
-recommended that you use pen and paper to create this figure to get a
-better understanding of the robot kinematics.
+All the values for the robot geometry are contained inside the URDF file
+divided into 2 XACRO (“XML macro URDF”) files:
 
-Your writeup should contain a DH parameter table with proper notations
-and description about how you obtained the table. Make sure to use the
-modified DH parameters discussed in this lesson. Please add an annotated
-figure of the robot with proper link assignments and joint rotations
-(Example figure provided in the writeup template). It is strongly
-recommended that you use pen and paper to create this figure to get a
-better understanding of the robot kinematics.
+1- kr210.gazebo.xacro contains static and dynamic friction coefficient
+for the links.
 
-Based on the geometric Inverse Kinematics method described here,
-breakdown the IK problem into Position and Orientation problems. Derive
-the equations for individual joint angles. Your writeup must contain
-details about the steps you took to arrive at those equations. Add
-figures where necessary. If any given joint has multiple solutions,
-select the best solution and provide explanation about your choice
-(Hint: Observe the active robot workspace in this project and the fact
-that some joints have physical limits).
+![](./media/image2.jpeg)
+
+2- kr210.urdf.xacro contains each LINK origin w.r.t to its local C.S.,
+mass, inertia tensor, visual representation using a DAE file, and a
+collision representation using an STL file.
+
+![](./media/image3.jpeg)
+
+It also contains each JOINT type, origin, parent/child LINK, axis, and
+physical limits.
+
+![](./media/image4.jpeg)
+
+From reading the URDF files, we can get a basic understanding of the
+robot kinematic system:
+
+![](./media/image5.jpeg)
+
+**Forward kinematics and DH params**
+
+The Denavit-Hartenberg (DH) parameters is a method for attaching
+reference frames to the links of a manipulator that simplifies the
+homogeneous transforms (HT):
+
+![](./media/image6.jpeg)
+
+Where:
+
+-**a** is the link **LENGTH**
+
+-**d** is the link **OFFSET**
+
+-**alpha** is **TWIST** angle
+
+-**theta** is **JOINT angle**
+
+![](./media/image7.jpeg)
+
+Derivation of the DH params for all joints is shown in pictures below:
+
+![](./media/image8.jpeg)![](./media/image9.jpeg)![](./media/image10.jpeg)![](./media/image11.jpeg)![](./media/image12.jpeg)![](./media/image13.jpeg)![](./media/image14.jpeg)
+
+Populating the DH params dictionary we get:
+
+![](./media/image15.jpeg)
+
+The DH convention uses 4 transforms to go from link(i-1) to link(i):
+
+![](./media/image16.jpeg)
+
+This can be put into matrix form that will do the translation and
+orientation transform at once:
+
+![](./media/image17.jpeg)
+
+Note that S stands for sin and C for cosin.
+
+**INVERSE KINEMATICS**
+
+**STEP1**- Compute the location of the WC (which is O4, O5, and O6 in
+the DH model):![](./media/image18.jpeg)
+
+**STEP2**- Solve for joint angles 1,2,3 (using trigonometry):
+
+![](./media/image19.jpeg)
+
+**STEP3**- The orientation of the EE is known from ROS. Need to find
+joint angles 4, 5, 6 using Euler Angles from Rotation Matrix.
+
+![](./media/image20.png)
 
 **kinematics implementation**
 
-IK\_server.py must contain properly commented code. The robot must track
-the planned trajectory and successfully complete pick and place
-operation. Your writeup must include explanation for the code and a
-discussion on the results, and a screenshot of the completed pick and
-place process..
-
-Function handle\_calculate\_IK(req) under IK\_serverpy performs the
+Function handle\_calculate\_IK(req) under IK\_server.py performs the
 inverse kinematics calculations:
 
 \# Define DH param symbols
@@ -302,11 +345,22 @@ len(joint\_trajectory\_list))
 
 return CalculateIKResponse(joint\_trajectory\_list)
 
-**ROS system model**
+**INvERSE Kinematics debug**
 
-Rock pickup is WIP. To enable it uncomment lines 59-84 on decision.py.
+The same code implemented on IK\_server.py is available on
+C:\\robotND1\\RoboND-Kinematics-Project\\ IK\_debug.py for quick
+testing.
 
-**CONCLUSIONS**
+Just run:
 
-Code\\ Rover\_Project\_Test\_Notebook01.py -&gt; Simple version of the
-Jupyter Notebook
+&gt;Python IK\_debug.py
+
+**RESULTS AND CONCLUSIONS**
+
+The ROS model was able to perform the pick and place action by utilizing
+Inverse Kinematics sent back to the ROS model for number of points
+calculated for the trajectory.
+
+A sequence of actions is shown below:
+
+![](./media/image21.png)![](./media/image22.png)![](./media/image23.png)![](./media/image24.png)![](./media/image25.png)![](./media/image26.png)![](./media/image27.png)![](./media/image28.png)![](./media/image29.png)
