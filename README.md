@@ -1,8 +1,9 @@
 # **Robotics Nanodegree** #
 
-#**Term1 – Project2: Robotic arm - Pick & Place project**#
+# **Term1 – Project2: Robotic arm - Pick & Place project** #
 
 ![](./media/image1.png)
+
 
 
 ## **SETUP AND RUN** ##
@@ -53,6 +54,7 @@ rosrun kuka_arm IK_server.py
 Click on “Next” to move thru actions.
 
 
+
 ## **INTRODUCTION** ##
 
 This project is modeled after KUKA KR210 Robotic Arm. The purpose is to
@@ -70,6 +72,7 @@ tools used for the project are:
 
 The goal of the project is to track the planned trajectory and
 successfully complete pick and place operation.
+
 
 
 ## **KINEMATICS GEOMETRY AND PARAMETERS** ##
@@ -97,6 +100,7 @@ From reading the URDF files, we can get a basic understanding of the
 robot kinematic system:
 
 ![](./media/image5.jpeg)
+
 
 
 ## **Forward kinematics and DH params** ##
@@ -139,6 +143,7 @@ orientation transform at once:
 Note that S stands for sin and C for cosin.
 
 
+
 ## **INVERSE KINEMATICS** ##
 
 **STEP1**- Compute the location of the WC (which is O4, O5, and O6 in
@@ -152,6 +157,7 @@ the DH model):![](./media/image18.jpeg)
 joint angles 4, 5, 6 using Euler Angles from Rotation Matrix.
 
 ![](./media/image20.png)
+
 
 
 ## **KINEMATICS IMPLEMENTATION** ##
@@ -271,6 +277,7 @@ theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 ```
 
 
+
 ## **INVERSE KINEMATICS DEBUG** ##
 
 The same code implemented on IK\_server.py is available on
@@ -282,6 +289,7 @@ Just run:
 ```
 python IK_debug.py
 ```
+
 
 
 ## **RESULTS AND CONCLUSIONS** ##
