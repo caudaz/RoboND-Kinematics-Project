@@ -8,50 +8,44 @@
 
 1-Gazebo check. It should be version 7.7.0+:
 
+```
 gazebo --version
-
-sudo sh -c 'echo "deb
-http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb\_release
--cs\` main" &gt; /etc/apt/sources.list.d/gazebo-stable.list'
-
-wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key
-add -
-
+sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
 sudo apt-get update
-
 sudo apt-get install gazebo7
-
 gazebo –version
+```
 
 2-On TERMINAL:
 
 ```
-mkdir -p ~/catkin_ws/src<br/>
-cd ~/catkin_ws/<br/>
-catkin_make<br/>
-cd ~/catkin_ws/src<br/>
-git clone https://github.com/caudaz/RoboND-Kinematics-Project<br/>
-cd ~/catkin_ws<br/>
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+cd ~/catkin_ws/src
+git clone https://github.com/caudaz/RoboND-Kinematics-Project
+cd ~/catkin_ws
 rosdep install --from-paths src --ignore-src --rosdistro=kinetic -y
-cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts<br/>
-sudo chmod +x target_spawn.py<br/>
-sudo chmod +x IK_server.py<br/>
-sudo chmod +x safe_spawner.sh<br/>
-cd ~/catkin_ws<br/>
-catkin_make<br/>
+cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
+sudo chmod +x target_spawn.py
+sudo chmod +x IK_server.py
+sudo chmod +x safe_spawner.sh
+cd ~/catkin_ws
+catkin_make
 export GAZEBO_MODEL_PATH=~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/models
-source ~/catkin_ws/devel/setup.bash<br/>
-cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts<br/>
+source ~/catkin_ws/devel/setup.bash
+cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 ./safe_spawner.sh
 ```
 
 3-On TERMINAL:
 
-source \~/catkin\_ws/devel/setup.bash
-
-cd \~/catkin\_ws/src/RoboND-Kinematics-Project/kuka\_arm/scripts
-
-rosrun kuka\_arm IK\_server.py
+```
+source ~/catkin_ws/devel/setup.bash
+cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
+rosrun kuka_arm IK_server.py
+```
 
 4-On RVIZ window:
 
@@ -159,196 +153,121 @@ joint angles 4, 5, 6 using Euler Angles from Rotation Matrix.
 Function handle\_calculate\_IK(req) under IK\_server.py performs the
 inverse kinematics calculations:
 
-\# Define DH param symbols
+```
+#     Define DH param symbols
+d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8')  # link offset
+a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7')  #link length
+alpha0, alpha1, alpha2, alpha3, alpha4, alpha5, alpha6 = symbols('alpha0:7')  #twist angle
 
-d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8') \# link offset
-
-a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7') \#link length
-
-alpha0, alpha1, alpha2, alpha3, alpha4, alpha5, alpha6 =
-symbols('alpha0:7') \#twist angle
-
-\# Joint angle symbols
-
+#     Joint angle symbols
 q1, q2, q3, q4 ,q5, q6, q7 = symbols('q1:8')
 
-\# Create Modified DH parameters
+# Create Modified DH parameters
+DH_Table = { alpha0:       0,  a0:      0,  d1:  0.75,  q1:          q1,
+             alpha1:  -pi/2.,  a1:   0.35,  d2:     0,  q2: -pi/2. + q2,
+             alpha2:       0,  a2:   1.25,  d3:     0,  q3:          q3,
+             alpha3:  -pi/2.,  a3:  -.054,  d4:   1.5,  q4:          q4,
+             alpha4:   pi/2.,  a4:      0,  d5:     0,  q5:          q5,
+             alpha5:  -pi/2.,  a5:      0,  d6:     0,  q6:          q6,
+             alpha6:       0,  a6:      0,  d7: 0.303,  q7:           0}
 
-DH\_Table = { alpha0: 0, a0: 0, d1: 0.75, q1: q1,
+# Define Modified DH Transformation matrix
+def TF_Matrix(alpha, a, d, q):
+    TF = Matrix([[             cos(q),            -sin(q),            0,              a],
+                [   sin(q)*cos(alpha),  cos(q)*cos(alpha),  -sin(alpha),  -sin(alpha)*d],
+                [   sin(q)*sin(alpha),  cos(q)*sin(alpha),   cos(alpha),   cos(alpha)*d],
+                [                   0,                  0,            0,              1]])
+    return TF
 
-alpha1: -pi/2., a1: 0.35, d2: 0, q2: -pi/2. + q2,
+# Create individual transformation matrices
+T0_1 =  TF_Matrix(alpha0, a0, d1, q1).subs(DH_Table)
+T1_2 =  TF_Matrix(alpha1, a1, d2, q2).subs(DH_Table)
+T2_3 =  TF_Matrix(alpha2, a2, d3, q3).subs(DH_Table)
+T3_4 =  TF_Matrix(alpha3, a3, d4, q4).subs(DH_Table)
+T4_5 =  TF_Matrix(alpha4, a4, d5, q5).subs(DH_Table)
+T5_6 =  TF_Matrix(alpha5, a5, d6, q6).subs(DH_Table)
+T6_EE = TF_Matrix(alpha6, a6, d7, q7).subs(DH_Table)
 
-alpha2: 0, a2: 1.25, d3: 0, q3: q3,
+T0_EE = T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_EE
 
-alpha3: -pi/2., a3: -.054, d4: 1.5, q4: q4,
-
-alpha4: pi/2., a4: 0, d5: 0, q5: q5,
-
-alpha5: -pi/2., a5: 0, d6: 0, q6: q6,
-
-alpha6: 0, a6: 0, d7: 0.303, q7: 0}
-
-\# Define Modified DH Transformation matrix
-
-def TF\_Matrix(alpha, a, d, q):
-
-TF = Matrix(\[\[ cos(q), -sin(q), 0, a\],
-
-\[ sin(q)\*cos(alpha), cos(q)\*cos(alpha), -sin(alpha),
--sin(alpha)\*d\],
-
-\[ sin(q)\*sin(alpha), cos(q)\*sin(alpha), cos(alpha), cos(alpha)\*d\],
-
-\[ 0, 0, 0, 1\]\])
-
-return TF
-
-\# Create individual transformation matrices
-
-T0\_1 = TF\_Matrix(alpha0, a0, d1, q1).subs(DH\_Table)
-
-T1\_2 = TF\_Matrix(alpha1, a1, d2, q2).subs(DH\_Table)
-
-T2\_3 = TF\_Matrix(alpha2, a2, d3, q3).subs(DH\_Table)
-
-T3\_4 = TF\_Matrix(alpha3, a3, d4, q4).subs(DH\_Table)
-
-T4\_5 = TF\_Matrix(alpha4, a4, d5, q5).subs(DH\_Table)
-
-T5\_6 = TF\_Matrix(alpha5, a5, d6, q6).subs(DH\_Table)
-
-T6\_EE = TF\_Matrix(alpha6, a6, d7, q7).subs(DH\_Table)
-
-T0\_EE = T0\_1 \* T1\_2 \* T2\_3 \* T3\_4 \* T4\_5 \* T5\_6 \* T6\_EE
-
-\# Extract rotation matrices from the transformation matrices
-
+# Extract rotation matrices from the transformation matrices
 r, p, y = symbols('r p y')
 
-ROT\_x = Matrix(\[\[1, 0, 0\],
+ROT_x = Matrix([[1,       0,        0],
+                [0,  cos(r),  -sin(r)],
+                [0,  sin(r),   cos(r)]])  # ROLL
 
-\[0, cos(r), -sin(r)\],
+ROT_y = Matrix([[ cos(p),  0,  sin(p)],
+                [      0,  1,       0],
+                [-sin(p),  0,  cos(p)]])  # PITCH
 
-\[0, sin(r), cos(r)\]\]) \# ROLL
+ROT_z = Matrix([[cos(y),  -sin(y),  0],
+                [sin(y),   cos(y),  0],
+                [     0,        0,  1]])  # YAW
 
-ROT\_y = Matrix(\[\[ cos(p), 0, sin(p)\],
+ROT_EE = ROT_z * ROT_y * ROT_x
+###
 
-\[ 0, 1, 0\],
-
-\[-sin(p), 0, cos(p)\]\]) \# PITCH
-
-ROT\_z = Matrix(\[\[cos(y), -sin(y), 0\],
-
-\[sin(y), cos(y), 0\],
-
-\[ 0, 0, 1\]\]) \# YAW
-
-ROT\_EE = ROT\_z \* ROT\_y \* ROT\_x
-
-\# Initialize service response
-
-joint\_trajectory\_list = \[\]
-
+# Initialize service response
+joint_trajectory_list = []
 for x in xrange(0, len(req.poses)):
+    # IK code starts here
+    joint_trajectory_point = JointTrajectoryPoint()
 
-\# IK code starts here
+# Extract end-effector position and orientation from request
+# px,py,pz = end-effector position
+# roll, pitch, yaw = end-effector orientation
+    px = req.poses[x].position.x
+    py = req.poses[x].position.y
+    pz = req.poses[x].position.z
 
-joint\_trajectory\_point = JointTrajectoryPoint()
+    (roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
+        [req.poses[x].orientation.x, req.poses[x].orientation.y,
+            req.poses[x].orientation.z, req.poses[x].orientation.w])
 
-\# Extract end-effector position and orientation from request
+# Compensate for rotation discrepancy between DH parameters and Gazebo
+Rot_Error = ROT_z.subs(y, radians(180)) * ROT_y.subs(p, radians(-90))
 
-\# px,py,pz = end-effector position
+ROT_EE = ROT_EE * Rot_Error
+ROT_EE = ROT_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
 
-\# roll, pitch, yaw = end-effector orientation
+EE = Matrix([[px],
+            [py],
+            [pz]])
 
-px = req.poses\[x\].position.x
+WC = EE - (0.303) * ROT_EE[:,2]
 
-py = req.poses\[x\].position.y
+# Calculate joint angles using Geometric IK method
+theta1 = atan2(WC[1], WC[0])
 
-pz = req.poses\[x\].position.z
+# SS triangle for theta2 and theta3
+side_a = 1.501
+side_b = sqrt(pow((sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35), 2) + pow((WC[2] - 0.75), 2))
+side_c = 1.25
 
-(roll, pitch, yaw) = tf.transformations.euler\_from\_quaternion(
+angle_a = acos((side_b * side_b + side_c * side_c - side_a * side_a) / (2 * side_b * side_c))
+angle_b = acos((side_a * side_a + side_c * side_c - side_b * side_b) / (2 * side_a * side_c))
+angle_c = acos((side_a * side_a + side_b * side_b - side_c * side_c) / (2 * side_a * side_b))
 
-\[req.poses\[x\].orientation.x, req.poses\[x\].orientation.y,
+theta2 = pi / 2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1] * WC[1]) - 0.35)
+theta3 = pi / 2 - (angle_b + 0.036)  # 0.036 accounts for sag in link4 of -0.054m
 
-req.poses\[x\].orientation.z, req.poses\[x\].orientation.w\])
+# Calculation of joint angles 4,5,6
+R0_3 = T0_1[0:3, 0:3] * T1_2[0:3, 0:3] * T2_3[0:3, 0:3]
+R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3})
 
-\# Compensate for rotation discrepancy between DH parameters and Gazebo
+R3_6 = R0_3.inv("LU") * ROT_EE
 
-Rot\_Error = ROT\_z.subs(y, radians(180)) \* ROT\_y.subs(p,
-radians(-90))
+# Euler angles from rotation matrix
+theta4 = atan2(R3_6[2,2], -R3_6[0,2])
+theta5 = atan2(sqrt(R3_6[0,2] * R3_6[0,2] + R3_6[2,2] * R3_6[2,2]), R3_6[1,2])
+theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+```
 
-ROT\_EE = ROT\_EE \* Rot\_Error
-
-ROT\_EE = ROT\_EE.subs({'r': roll, 'p': pitch, 'y': yaw})
-
-EE = Matrix(\[\[px\],
-
-\[py\],
-
-\[pz\]\])
-
-WC = EE - (0.303) \* ROT\_EE\[:,2\]
-
-\# Calculate joint angles using Geometric IK method
-
-theta1 = atan2(WC\[1\], WC\[0\])
-
-\# SS triangle for theta2 and theta3
-
-side\_a = 1.501
-
-side\_b = sqrt(pow((sqrt(WC\[0\] \* WC\[0\] + WC\[1\] \* WC\[1\]) -
-0.35), 2) + pow((WC\[2\] - 0.75), 2))
-
-side\_c = 1.25
-
-angle\_a = acos((side\_b \* side\_b + side\_c \* side\_c - side\_a \*
-side\_a) / (2 \* side\_b \* side\_c))
-
-angle\_b = acos((side\_a \* side\_a + side\_c \* side\_c - side\_b \*
-side\_b) / (2 \* side\_a \* side\_c))
-
-angle\_c = acos((side\_a \* side\_a + side\_b \* side\_b - side\_c \*
-side\_c) / (2 \* side\_a \* side\_b))
-
-theta2 = pi / 2 - angle\_a - atan2(WC\[2\] - 0.75, sqrt(WC\[0\] \*
-WC\[0\] + WC\[1\] \* WC\[1\]) - 0.35)
-
-theta3 = pi / 2 - (angle\_b + 0.036) \# 0.036 accounts for sag in link4
-of -0.054m
-
-R0\_3 = T0\_1\[0:3, 0:3\] \* T1\_2\[0:3, 0:3\] \* T2\_3\[0:3, 0:3\]
-
-R0\_3 = R0\_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3})
-
-R3\_6 = R0\_3.inv("LU") \* ROT\_EE
-
-\# Euler angles from rotation matrix
-
-theta4 = atan2(R3\_6\[2,2\], -R3\_6\[0,2\])
-
-theta5 = atan2(sqrt(R3\_6\[0,2\] \* R3\_6\[0,2\] + R3\_6\[2,2\] \*
-R3\_6\[2,2\]), R3\_6\[1,2\])
-
-theta6 = atan2(-R3\_6\[1,1\], R3\_6\[1,0\])
-
-\# Populate response for the IK request
-
-joint\_trajectory\_point.positions = \[theta1, theta2, theta3, theta4,
-theta5, theta6\]
-
-joint\_trajectory\_list.append(joint\_trajectory\_point)
-
-rospy.loginfo("length of Joint Trajectory List: %s" %
-len(joint\_trajectory\_list))
-
-return CalculateIKResponse(joint\_trajectory\_list)
-
-**INvERSE Kinematics debug**
+**INVERSE KINEMATICS DEBUG**
 
 The same code implemented on IK\_server.py is available on
-C:\\robotND1\\RoboND-Kinematics-Project\\ IK\_debug.py for quick
+RoboND-Kinematics-Project\\ IK\_debug.py for quick
 testing.
 
 Just run:
