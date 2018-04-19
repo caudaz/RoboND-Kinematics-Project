@@ -161,14 +161,14 @@ the DH model):![](./media/image18.jpeg)
 
 ![](./media/image19.jpeg)
 
+This is converted into code:
+
+![](./media/image32.jpg)
+
 **STEP3**- The orientation of the EE is known from ROS. Need to find
 joint angles 4, 5, 6 using Euler Angles from Rotation Matrix.
 
 ![](./media/image20.png)
-
-This is converted into code:
-
-![](./media/image32.jpg)
 
 
 
