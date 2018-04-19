@@ -167,6 +167,11 @@ This is converted into code:
 
 **STEP3**- The orientation of the EE is known from ROS. Need to find
 joint angles 4, 5, 6 using Euler Angles from Rotation Matrix.
+The transform matrix going from 6 to 3 is:
+
+![](./media/image33.jpg)
+
+And the implementation in the code is:
 
 ![](./media/image20.png)
 
