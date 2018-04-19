@@ -1,10 +1,11 @@
-**Robotics Nanodegree**
+# **Robotics Nanodegree** #
 
-**Term1 – Project2: Robotic arm - Pick & Place project**
+#**Term1 – Project2: Robotic arm - Pick & Place project**#
 
 ![](./media/image1.png)
 
-**SETUP AND RUN**
+
+## **SETUP AND RUN** ##
 
 1-Gazebo check. It should be version 7.7.0+:
 
@@ -51,7 +52,8 @@ rosrun kuka_arm IK_server.py
 
 Click on “Next” to move thru actions.
 
-**INTRODUCTION**
+
+## **INTRODUCTION** ##
 
 This project is modeled after KUKA KR210 Robotic Arm. The purpose is to
 implement the inverse kinematics calculations of the system, after being
@@ -69,7 +71,8 @@ tools used for the project are:
 The goal of the project is to track the planned trajectory and
 successfully complete pick and place operation.
 
-**KINEMATICS GEOMETRY AND PARAMETERS**
+
+## **KINEMATICS GEOMETRY AND PARAMETERS** ##
 
 All the values for the robot geometry are contained inside the URDF file
 divided into 2 XACRO (“XML macro URDF”) files:
@@ -95,7 +98,8 @@ robot kinematic system:
 
 ![](./media/image5.jpeg)
 
-**Forward kinematics and DH params**
+
+## **Forward kinematics and DH params** ##
 
 The Denavit-Hartenberg (DH) parameters is a method for attaching
 reference frames to the links of a manipulator that simplifies the
@@ -134,7 +138,8 @@ orientation transform at once:
 
 Note that S stands for sin and C for cosin.
 
-**INVERSE KINEMATICS**
+
+## **INVERSE KINEMATICS** ##
 
 **STEP1**- Compute the location of the WC (which is O4, O5, and O6 in
 the DH model):![](./media/image18.jpeg)
@@ -148,7 +153,8 @@ joint angles 4, 5, 6 using Euler Angles from Rotation Matrix.
 
 ![](./media/image20.png)
 
-**kinematics implementation**
+
+## **KINEMATICS IMPLEMENTATION** ##
 
 Function handle\_calculate\_IK(req) under IK\_server.py performs the
 inverse kinematics calculations:
@@ -264,7 +270,8 @@ theta5 = atan2(sqrt(R3_6[0,2] * R3_6[0,2] + R3_6[2,2] * R3_6[2,2]), R3_6[1,2])
 theta6 = atan2(-R3_6[1,1], R3_6[1,0])
 ```
 
-**INVERSE KINEMATICS DEBUG**
+
+## **INVERSE KINEMATICS DEBUG** ##
 
 The same code implemented on IK\_server.py is available on
 RoboND-Kinematics-Project\\ IK\_debug.py for quick
@@ -272,9 +279,12 @@ testing.
 
 Just run:
 
-&gt;Python IK\_debug.py
+```
+python IK_debug.py
+```
 
-**RESULTS AND CONCLUSIONS**
+
+## **RESULTS AND CONCLUSIONS** ##
 
 The ROS model was able to perform the pick and place action by utilizing
 Inverse Kinematics sent back to the ROS model for number of points
