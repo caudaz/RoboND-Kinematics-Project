@@ -173,7 +173,11 @@ The transform matrix going from 6 to 3 is:
 
 And the implementation in the code is:
 
-![](./media/image20b.png)
+![](./media/image20c.png)
+
+There will be multiple solutions for theta5: atan2 is used to find the angle in the right quadrant and the result of the square root inside of it assumed to be positive.
+
+![](./media/image20d.png)
 
 
 
