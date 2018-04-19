@@ -142,6 +142,14 @@ orientation transform at once:
 
 Note that S stands for sin and C for cosin.
 
+Using the DH params, the individual homogeneous transform matrices can be derived:
+
+![](./media/image31.jpeg)
+
+In the end we would like to obtain a homogeneous transform from the base C.S to the EE:
+
+![](./media/image30.jpeg)
+
 
 
 ## **INVERSE KINEMATICS** ##
