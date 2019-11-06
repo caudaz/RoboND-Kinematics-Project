@@ -8,9 +8,10 @@
 
 ## **SETUP AND RUN** ##
 
-0-install Moveit package
+0-install needed ROS packages
 ```
 sudo apt-get install ros-melodic-moveit
+sudo apt-get install ros-melodic-rviz-visual-tools
 ```
 
 1-Gazebo check. It should be version 7.7.0+:
