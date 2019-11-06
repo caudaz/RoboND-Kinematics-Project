@@ -8,6 +8,11 @@
 
 ## **SETUP AND RUN** ##
 
+0-install Moveit package
+```
+sudo apt-get install ros-melodic-moveit
+```
+
 1-Gazebo check. It should be version 7.7.0+:
 
 ```
@@ -27,6 +32,7 @@ cd ~/catkin_ws/
 catkin_make
 cd ~/catkin_ws/src
 git clone https://github.com/caudaz/RoboND-Kinematics-Project
+git clone https://github.com/ros-planning/moveit_visual_tools
 cd ~/catkin_ws
 rosdep install --from-paths src --ignore-src --rosdistro=kinetic -y
 cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
