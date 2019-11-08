@@ -9,9 +9,13 @@
 ## **SETUP AND RUN** ##
 
 0-install needed ROS packages
+```diff
+- NOTE: THIS MODEL ONLY WORKS WITH UBUNTU16.04 AND ROS1-KINETIC
+- (TESTED ON UBUNTU18.04 AND ROS1-MELODIC AND DID NOT WORK!!!)
 ```
-sudo apt-get install ros-melodic-moveit
-sudo apt-get install ros-melodic-rviz-visual-tools
+```
+sudo apt-get install ros-kinetic-moveit
+sudo apt-get install ros-kinetic-rviz-visual-tools
 ```
 
 1-Gazebo check. It should be version 7.7.0+:
