@@ -37,9 +37,13 @@ cd ~/catkin_ws/
 catkin_make
 cd ~/catkin_ws/src
 git clone https://github.com/caudaz/RoboND-Kinematics-Project
+git clone https://github.com/ros-planning/moveit
 git clone https://github.com/ros-planning/moveit_visual_tools
 cd ~/catkin_ws
 rosdep install --from-paths src --ignore-src --rosdistro=kinetic -y
+
+sudo apt-get install libignition-math2-dev
+
 cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 sudo chmod +x target_spawn.py
 sudo chmod +x IK_server.py
