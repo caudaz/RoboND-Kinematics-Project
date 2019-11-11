@@ -11,6 +11,8 @@
 0-install needed ROS packages
 ```diff
 - NOTE: THIS MODEL ONLY WORKS WITH UBUNTU16.04 AND ROS1-KINETIC
+- model comes up, but with communication errors!!
+
 - (TESTED ON UBUNTU18.04 AND ROS1-MELODIC AND DID NOT WORK!!!)
 ```
 ```
