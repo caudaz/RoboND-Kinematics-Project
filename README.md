@@ -63,6 +63,7 @@ cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 ```
 
 3A-On TERMINAL: install Python libraries for IK_server.py
+```
 source /opt/ros/kinetic/setup.bash
 sudo pip install mpmath
 sudo pip install sympy```
