@@ -18,7 +18,7 @@ sudo apt-get install ros-kinetic-moveit
 sudo apt-get install ros-kinetic-rviz-visual-tools
 ```
 
-1-Gazebo check. It should be version 7.7.0+:
+1A-Gazebo check. It should be version 7.7.0+: (First time only)
 
 ```
 gazebo --version
@@ -29,7 +29,7 @@ sudo apt-get install gazebo7
 gazebo –version
 ```
 
-1B - needed packages
+1B - needed packages (First time only)
 ```
 sudo apt-get install libignition-math2-dev
 sudo apt-get install ros-kinetic-moveit-visual-tools
@@ -62,7 +62,7 @@ cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 ./safe_spawner.sh
 ```
 
-3A-On TERMINAL: install Python libraries for IK_server.py
+3A-On TERMINAL: install Python libraries for IK_server.py (First time only)
 ```
 source /opt/ros/kinetic/setup.bash
 sudo pip install mpmath
