@@ -62,8 +62,13 @@ cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
 ./safe_spawner.sh
 ```
 
-3-On TERMINAL:
+3A-On TERMINAL: install Python libraries for IK_server.py
+source /opt/ros/kinetic/setup.bash
+sudo pip install mpmath
+sudo pip install sympy```
+```
 
+3B-On TERMINAL:
 ```
 source ~/catkin_ws/devel/setup.bash
 cd ~/catkin_ws/src/RoboND-Kinematics-Project/kuka_arm/scripts
